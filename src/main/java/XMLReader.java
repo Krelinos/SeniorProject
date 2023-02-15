@@ -11,6 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,6 +55,11 @@ public class XMLReader extends JPanel
     
     // Multiplier used to crudly zoom in and out.
     public static double zoomLevel = 1;
+    // Is the graph view being panned due to a mouse press?
+    public static boolean panView = false;
+    public static Point panOrigin;
+    public static Point panOffset = new Point();
+    public static Point totalPanOffset = new Point();
     
     @Override
     public void paintComponent( Graphics g )
@@ -93,7 +101,7 @@ public class XMLReader extends JPanel
                 // p.x * 10000000000000 was too large for the int data type, so I just divided
                 // by 0.0000000000005 to scale the X axis.
                 // Obviously this should also be revamped.
-                g.fillRect( (int)( ((p.x/0.000000000005) + 300)*zoomLevel ), (int)( ( (p.y*50)+300 )*zoomLevel ), 3, 3 );
+                g.fillRect( (int)( ((p.x/0.000000000005) + 300)*zoomLevel ) + panOffset.x + totalPanOffset.x, (int)( ( (p.y*50)+300 )*zoomLevel ) + panOffset.y + totalPanOffset.y, 3, 3 );
             }
         }
         
@@ -171,6 +179,49 @@ public class XMLReader extends JPanel
             app.setSize(1000, 800);
             app.setLocationRelativeTo(null);
             app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            
+            app.addMouseListener(new MouseListener(){
+                @Override
+                public void mouseEntered( MouseEvent e )
+                {
+                    
+                }
+                @Override
+                public void mousePressed( MouseEvent e )
+                {
+                    panOrigin = e.getPoint();
+                }
+                @Override
+                public void mouseReleased( MouseEvent e )
+                {
+                    totalPanOffset.move( totalPanOffset.x + panOffset.x, totalPanOffset.y + panOffset.y );
+                    panOffset.move( 0, 0 );
+                }
+                @Override
+                public void mouseClicked( MouseEvent e )
+                {
+                    
+                }
+                @Override
+                public void mouseExited( MouseEvent e )
+                {
+                    
+                }
+            });
+            
+            app.addMouseMotionListener(new MouseMotionListener(){
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    System.out.println(e.getX() - panOrigin.x);
+                    panOffset.move( e.getX() - panOrigin.x, e.getY() - panOrigin.y );
+                    app.repaint();
+                }
+
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                }
+                
+            });
             
             //BufferedImage zoomIcons = ImageIO.read(new File("D:\\waveforms\\zoom-icons.png"));
             JPanel zoomButtons = new JPanel();
