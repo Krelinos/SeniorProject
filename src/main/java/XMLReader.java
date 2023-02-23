@@ -155,13 +155,13 @@ public class XMLReader extends JPanel
                 }
             };
             
-            saxParser.parse("D:\\waveforms\\JS-002 (6.8pF)_20221003110909.result.xml", handler);
+            saxParser.parse("\\C:\\Users\\XCCX3\\Desktop\\Senior Project - CSCI4391\\SeniorProject\\JS-002 (6.8pF)_20221003110909.result.xml", handler);
             waveforms.add( new WaveformData( xCoords, yCoords, lowestY, highestY ) );               // Writing the static data to a nonstatic WaveformData object.
 
             xCoords.clear();    // Prep for the next waveform
             yCoords.clear();
             
-            saxParser.parse("D:\\waveforms\\JS-002 (6.8pF)_20221003111023.result.xml", handler);  
+            saxParser.parse("\\C:\\Users\\XCCX3\\Desktop\\Senior Project - CSCI4391\\SeniorProject\\JS-002 (6.8pF)_20221003111023.result.xml", handler);  
             waveforms.add( new WaveformData( xCoords, yCoords, lowestY, highestY ) );
             
             // Basic app window stuff in Java
