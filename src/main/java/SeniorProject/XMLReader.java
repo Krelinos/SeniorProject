@@ -1,3 +1,5 @@
+package SeniorProject;
+
 /*
 
 This code is hella messy and honestly should be scrapped and redone, but it works.
@@ -27,7 +29,7 @@ public class XMLReader extends JPanel
 {  
     // All of the read waveform files are kept in a class called WaveformData.
     // That class stores the info of the point coordinates, lowestY, and highestY.
-    public static ArrayList<WaveformData> waveforms = new ArrayList<WaveformData>();
+    public static ArrayList<XMLReader.Waveform> waveforms = new ArrayList<Waveform>();
     
     // A brief reminder on the relevent XML tags:
     /*
@@ -68,7 +70,7 @@ public class XMLReader extends JPanel
         boolean color = false;
         
         // Iterate through all read waveform XMLs.
-        Iterator<WaveformData> readWaveData = waveforms.iterator();
+        Iterator<Waveform> readWaveData = waveforms.iterator();
         while( readWaveData.hasNext() )
         {
             System.out.println("Reading a waveform");
@@ -89,7 +91,7 @@ public class XMLReader extends JPanel
                 color = false;
             }
             
-            WaveformData aWaveform = readWaveData.next();
+            Waveform aWaveform = readWaveData.next();
             Iterator<Point2D.Double> waveformPoints = aWaveform.coordinates.iterator();
             
             System.out.println("This waveform has " + aWaveform.coordinates.size() + " elements");
@@ -164,13 +166,13 @@ public class XMLReader extends JPanel
             };
             
             saxParser.parse("D:\\waveforms\\JS-002 (6.8pF)_20221003110909.result.xml", handler);
-            waveforms.add( new WaveformData( xCoords, yCoords, lowestY, highestY ) );               // Writing the static data to a nonstatic WaveformData object.
+            waveforms.add( new Waveform( xCoords, yCoords, lowestY, highestY ) );               // Writing the static data to a nonstatic WaveformData object.
 
             xCoords.clear();    // Prep for the next waveform
             yCoords.clear();
             
             saxParser.parse("D:\\waveforms\\JS-002 (6.8pF)_20221003111023.result.xml", handler);  
-            waveforms.add( new WaveformData( xCoords, yCoords, lowestY, highestY ) );
+            waveforms.add( new Waveform( xCoords, yCoords, lowestY, highestY ) );
             
             // Basic app window stuff in Java
             XMLReader xmlReader = new XMLReader();
@@ -260,29 +262,29 @@ public class XMLReader extends JPanel
             e.printStackTrace();  
         }  
     }  
-}  
-
-class WaveformData
-{
-    double lowestY;
-    double highestY;
     
-    ArrayList<Point2D.Double> coordinates = new ArrayList<>();
-    
-    WaveformData( ArrayList<Double> setXCoords, ArrayList<Double> setYCoords, double setLowestY, double setHighestY )
+    private class Waveform
     {
-        lowestY = setLowestY;
-        highestY = setHighestY;
-        
-        // ArrayList is not a primative, so I need to create a copy for both axises (axii?).
-        Iterator<Double> xIterator = setXCoords.iterator();
-        Iterator<Double> yIterator = setYCoords.iterator();
-        
-        while( xIterator.hasNext() && yIterator.hasNext() )
+        double lowestY;
+        double highestY;
+
+        ArrayList<Point2D.Double> coordinates = new ArrayList<>();
+
+        Waveform( ArrayList<Double> setXCoords, ArrayList<Double> setYCoords, double setLowestY, double setHighestY )
         {
-            Point2D.Double aCoordinate = new Point2D.Double();
-            aCoordinate.setLocation( xIterator.next() , yIterator.next() );
-            coordinates.add( aCoordinate );
+            lowestY = setLowestY;
+            highestY = setHighestY;
+
+            // ArrayList is not a primative, so I need to create a copy for both axises (axii?).
+            Iterator<Double> xIterator = setXCoords.iterator();
+            Iterator<Double> yIterator = setYCoords.iterator();
+
+            while( xIterator.hasNext() && yIterator.hasNext() )
+            {
+                Point2D.Double aCoordinate = new Point2D.Double();
+                aCoordinate.setLocation( xIterator.next() , yIterator.next() );
+                coordinates.add( aCoordinate );
+            }
         }
     }
-}
+}  
