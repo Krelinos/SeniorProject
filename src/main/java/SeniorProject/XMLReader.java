@@ -263,7 +263,7 @@ public class XMLReader extends JPanel
         }  
     }  
     
-    private class Waveform
+    private static class Waveform
     {
         double lowestY;
         double highestY;
