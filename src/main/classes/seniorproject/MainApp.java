@@ -13,10 +13,10 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("resources/ApplicationLayout.fxml"));
-
+        
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("resources/styles.css").toExternalForm());
-
+        
         stage.setTitle("Waveform Grapher");
         stage.setScene(scene);
         stage.show();
