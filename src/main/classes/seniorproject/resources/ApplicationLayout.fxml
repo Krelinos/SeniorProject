@@ -53,13 +53,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 
-<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seniorproject.FXMLController">
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <MenuBar>
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Import XML" />
+              <MenuItem fx:id="importXMLButon" mnemonicParsing="false" text="Import XML" />
                   <MenuItem mnemonicParsing="false" text="Export CSV" />
                   <MenuItem mnemonicParsing="false" text="Export PNG" />
             </items>
@@ -90,13 +90,46 @@
                                     <Insets />
                                  </opaqueInsets>
                                  <children>
+                                    <ToolBar fx:id="waveformLayerTemplate" prefWidth="335.0" VBox.vgrow="ALWAYS">
+                                      <items>
+                                          <Button mnemonicParsing="false" text="X">
+                                             <tooltip>
+                                                <Tooltip text="Delete Layer" />
+                                             </tooltip>
+                                          </Button>
+                                          <TextField promptText="Waveform Name" />
+                                          <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="^">
+                                             <tooltip>
+                                                <Tooltip text="Move Up One Layer" />
+                                             </tooltip>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="V">
+                                             <tooltip>
+                                                <Tooltip text="Move Down One Layer" />
+                                             </tooltip>
+                                          </Button>
+                                          <ColorPicker prefHeight="30.0" prefWidth="30.0">
+                                             <value>
+                                                <Color />
+                                             </value>
+                                             <tooltip>
+                                                <Tooltip text="Select Waveform Color" />
+                                             </tooltip>
+                                          </ColorPicker>
+                                          <CheckBox mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" selected="true">
+                                             <tooltip>
+                                                <Tooltip text="Toggle Waveform Visability" />
+                                             </tooltip>
+                                          </CheckBox>
+                                      </items>
+                                    </ToolBar>
                                  </children>
                               </VBox>
                            </content>
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <ScatterChart alternativeColumnFillVisible="true" animated="false" legendSide="LEFT" legendVisible="false" HBox.hgrow="ALWAYS">
+                  <ScatterChart fx:id="waveformChart" alternativeColumnFillVisible="true" animated="false" legendSide="LEFT" legendVisible="false" HBox.hgrow="ALWAYS">
                     <xAxis>
                       <CategoryAxis label="Time (ps)" prefHeight="22.0" prefWidth="972.0" side="LEFT" />
                     </xAxis>
