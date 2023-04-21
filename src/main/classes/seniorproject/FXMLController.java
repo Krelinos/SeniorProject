@@ -53,6 +53,9 @@ public class FXMLController {
     private MenuItem importXMLButton;
     
     @FXML
+    private MenuItem exportCSVButton;
+    
+    @FXML
     void openDialog_importXML( ActionEvent e ) throws IOException
     {
         
@@ -67,6 +70,33 @@ public class FXMLController {
         
         addWaveform(selectedFile);
 
+    }
+    
+    @FXML
+    void openDialog_exportCSV( ActionEvent e ) throws IOException
+    {
+        
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV FILES (*.csv)", "*.csv");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(null);
+        System.out.print(file);
+
+        FileWriter writer = new FileWriter(file);
+
+        writer.write("X" + ","+ "Y" + "\n");
+        for (int i = 0; i < xchords.length; i++) {
+            if (xchords[i] <= 0)
+                i++;
+            else
+            writer.write((xchords[i]) + "," + ychords[i] + "\n");
+            //writer.write(Arrays.toString(ychords[i]) + "\n");
+        }
+        writer.close();
+        
+        
     }
     
     @FXML
