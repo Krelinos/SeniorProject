@@ -55,9 +55,18 @@ public class FXMLController {
     @FXML
     void openDialog_importXML( ActionEvent e ) throws IOException
     {
-        addWaveform( new File("D:\\waveforms\\JS-002 (6.8pF)_20221003110909.result.xml") );
-        addWaveform( new File("D:\\waveforms\\JS-002 (6.8pF)_20221003111023.result.xml") );
-        addWaveform( new File("D:\\waveforms\\JS-002 (6.8pF)_20221003110943.result.xml") );
+        
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML FILES (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        //Show save file dialog
+        File selectedFile = fileChooser.showOpenDialog(null);
+        
+        //File filePath = selectedFile.getAbsolutePath();
+        
+        addWaveform(selectedFile);
+
     }
     
     @FXML
