@@ -87,7 +87,7 @@ public class FXMLController {
 
         FileWriter writer = new FileWriter(file);
 
-        writer.write("X" + ","+ "Y" + "\n");
+        writer.write("Time(ps)" + ","+ "Current(A)" + "\n");
         
         for( Waveform w : waveforms )
             for( Data data : w.waveformXYChart.getData() )
@@ -95,8 +95,7 @@ public class FXMLController {
                 {
                     Double uh = (Double)data.getXValue();
                     BigDecimal hmm = new BigDecimal(uh);
-                    System.out.println(  );
-                    writer.write( String.format("%f,%f\n", (Double)data.getXValue()*(10^12), (Double)data.getYValue()) );
+                    writer.write( String.format("%f,%f\n", hmm.scaleByPowerOfTen(12), (Double)data.getYValue()) );
                 }
                     
                 //writer.write(Arrays.toString(ychords[i]) + "\n");
