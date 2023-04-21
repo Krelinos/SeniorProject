@@ -124,7 +124,7 @@ public class JavaFXLineChartExample extends Application {
         try
         {
 
-            File file = new File("Your file path");
+            File file = new File("D:\\waveforms\\JS-002 (6.8pF)_20221003110909.result.xml");
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = documentBuilder.parse(file);
             //System.out.println("Root element: "+ document.getDocumentElement().getNodeName());
