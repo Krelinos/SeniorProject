@@ -91,12 +91,7 @@ public class FXMLController {
         
         for( Waveform w : waveforms )
             for( Data data : w.waveformXYChart.getData() )
-                if( (Double)data.getXValue() > 0 )
-                {
-                    Double uh = (Double)data.getXValue();
-                    BigDecimal hmm = new BigDecimal(uh);
-                    writer.write( String.format("%f,%f\n", hmm.scaleByPowerOfTen(12), (Double)data.getYValue()) );
-                }
+                    writer.write( String.format("%f,%f\n", (Double)data.getXValue(), (Double)data.getYValue()) );
                     
                 //writer.write(Arrays.toString(ychords[i]) + "\n");
                 
@@ -151,7 +146,7 @@ public class FXMLController {
         h.setLowerBound( -5.0 );
         
         NumberAxis g = (NumberAxis)waveformChart.getXAxis();
-        g.setUpperBound( 0.000000004 );
+        g.setUpperBound( 4000 );
         g.setLowerBound( 0 );
     }    
     

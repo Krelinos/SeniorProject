@@ -6,6 +6,7 @@ package seniorproject;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -120,7 +121,16 @@ public class Waveform
         Iterator<Double> yCoordinatesIterator = yCoordinates.iterator();
         
         while( xCoordinatesIterator.hasNext() && yCoordinatesIterator.hasNext() )
-            waveformXYChart.getData().add( new XYChart.Data<>( xCoordinatesIterator.next(), yCoordinatesIterator.next() ) );
+        {
+            BigDecimal xToPicoseconds = new BigDecimal( xCoordinatesIterator.next() );
+            xToPicoseconds = xToPicoseconds.scaleByPowerOfTen(12);
+            Double y = yCoordinatesIterator.next();
+            
+            if( xToPicoseconds.doubleValue() < 0 )
+                continue;
+            
+            waveformXYChart.getData().add( new XYChart.Data<>( xToPicoseconds.doubleValue(), y ) );
+        }
     
     }
     
