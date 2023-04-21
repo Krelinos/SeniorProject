@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.Pane?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="661.0" prefWidth="941.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo244.HelloController">
@@ -28,7 +29,17 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Export">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#Export" text="Export wave1" />
+                <MenuItem mnemonicParsing="false" onAction="#Export" text="Image" />
+                  <MenuItem mnemonicParsing="false" onAction="#Export" text="Raw data in excel" />
+                  <MenuItem mnemonicParsing="false" onAction="#Export" text="CSV" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu mnemonicParsing="false" text="Summary of...">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="IP1" />
+                        <MenuItem mnemonicParsing="false" text="IP2" />
+                        <MenuItem mnemonicParsing="false" text="All Data Points" />
+                    </items>
+                  </Menu>
               </items>
             </Menu>
         </menus>
