@@ -10,23 +10,23 @@
 
 <ToolBar prefWidth="335.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <items>
-      <Button mnemonicParsing="false" text="X">
+      <Button fx:id="closeButton" mnemonicParsing="false" text="X">
          <tooltip>
             <Tooltip text="Delete layer&#10;(Shift-click) Delete all except this" />
          </tooltip>
       </Button>
-      <TextField promptText="Waveform Name" />
-      <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="^">
+      <TextField fx:id="waveformName" promptText="Waveform Name" />
+      <Button fx:id="upButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="^">
          <tooltip>
             <Tooltip text="Move up one layer&#10;(Shift-click) Move to top" />
          </tooltip>
       </Button>
-      <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="V">
+      <Button fx:id="downButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="V">
          <tooltip>
             <Tooltip text="Move down one layer&#10;(Shift-click) Move to bottom" />
          </tooltip>
       </Button>
-      <ColorPicker prefHeight="30.0" prefWidth="30.0">
+      <ColorPicker fx:id="colorPicker" prefHeight="30.0" prefWidth="30.0">
          <value>
             <Color />
          </value>
@@ -34,7 +34,7 @@
             <Tooltip text="Select waveform color" />
          </tooltip>
       </ColorPicker>
-      <CheckBox mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" selected="true">
+      <CheckBox fx:id="visibilityCheckBox" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" selected="true">
          <tooltip>
             <Tooltip text="Toggle waveform visability&#10;(Shift-click) Hide all except this" />
          </tooltip>

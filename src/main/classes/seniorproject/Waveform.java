@@ -121,6 +121,7 @@ public class Waveform
         
         while( xCoordinatesIterator.hasNext() && yCoordinatesIterator.hasNext() )
             waveformXYChart.getData().add( new XYChart.Data<>( xCoordinatesIterator.next(), yCoordinatesIterator.next() ) );
+    
     }
     
     void analyzeWaveform()

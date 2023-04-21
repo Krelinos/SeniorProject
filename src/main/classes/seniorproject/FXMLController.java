@@ -1,7 +1,9 @@
 package seniorproject;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,16 +21,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -53,12 +59,8 @@ public class FXMLController {
     private MenuItem importXMLButton;
     
     @FXML
-    private MenuItem exportCSVButton;
-    
-    @FXML
     void openDialog_importXML( ActionEvent e ) throws IOException
     {
-        
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML FILES (*.xml)", "*.xml");
         fileChooser.getExtensionFilters().add(extFilter);
@@ -69,7 +71,6 @@ public class FXMLController {
         //File filePath = selectedFile.getAbsolutePath();
         
         addWaveform(selectedFile);
-
     }
     
     @FXML
@@ -87,24 +88,28 @@ public class FXMLController {
         FileWriter writer = new FileWriter(file);
 
         writer.write("X" + ","+ "Y" + "\n");
-        for (int i = 0; i < xchords.length; i++) {
-            if (xchords[i] <= 0)
-                i++;
-            else
-            writer.write((xchords[i]) + "," + ychords[i] + "\n");
-            //writer.write(Arrays.toString(ychords[i]) + "\n");
-        }
-        writer.close();
         
+        for( Waveform w : waveforms )
+            for( Data data : w.waveformXYChart.getData() )
+                if( (Double)data.getXValue() > 0 )
+                {
+                    Double uh = (Double)data.getXValue();
+                    BigDecimal hmm = new BigDecimal(uh);
+                    System.out.println(  );
+                    writer.write( String.format("%f,%f\n", (Double)data.getXValue()*(10^12), (Double)data.getYValue()) );
+                }
+                    
+                //writer.write(Arrays.toString(ychords[i]) + "\n");
+                
+        writer.close();
         
     }
     
     @FXML
     void openDialog_fontsAndColors( ActionEvent e ){
-        System.out.println("uwu");
         try
         {
-            Pane bruh = FXMLLoader.load(getClass().getResource("resources/settings_FontsAndColorsDialog.fxml"));
+            Pane bruh = FXMLLoader.load(getClass().getResource("resources/settingsDialogFontsAndColors.fxml"));
             Scene settingsDialog = new Scene( bruh );
             Stage s = new Stage( StageStyle.UTILITY );
             s.setScene( settingsDialog );
@@ -139,12 +144,6 @@ public class FXMLController {
     }
     
     public void initialize() {
-//        String javaVersion = System.getProperty("java.version");
-//        String javafxVersion = System.getProperty("javafx.version");
-//        label.setText("Hello, JavaFX " + javafxVersion + "\nRunning on Java " + javaVersion + ".");
-        
-//        waveformChart.scaleXProperty().bind( zoom );
-//        waveformChart.scaleYProperty().bind( zoom );
         
         waveforms = new ArrayList<>();
 
@@ -155,8 +154,6 @@ public class FXMLController {
         NumberAxis g = (NumberAxis)waveformChart.getXAxis();
         g.setUpperBound( 0.000000004 );
         g.setLowerBound( 0 );
-        
-        
     }    
     
     private void addWaveform( File file )
@@ -172,62 +169,51 @@ public class FXMLController {
             waveforms.add( wave );
             waveformLayers.getChildren().add( t );
             
+            // Sets all points to black. Eventually, TODO: I want to add an option for the user to select a default color
+            for( Data d : wave.waveformXYChart.getData() )
+                    d.getNode().setStyle( String.format("-fx-background-color: %s;", "#000000") );
+            refreshWaveformGraph();
+            
+            // Removes a waveform series and its toolbar from the graph
             Button closeButton = (Button)t.getItems().get(0);       // "Why index 0?" you ask. If you look at WaveformLayer.fxml,
                                                                     // The closeButton is the first <Button> item in the <Toolbar><Items>
             closeButton.setOnAction( (ActionEvent e1) ->
             {
-                System.out.println("Bruh");
                 waveforms.remove( wave );
                 waveformLayers.getChildren().remove( t );
                 waveformChart.getData().remove( wave.waveformXYChart );
             } );
             
+            // Moves the waveform series and its toolbar up one layer
             Button upButton = (Button)t.getItems().get(2);
             upButton.setOnAction( (ActionEvent el) ->
             {
-                if( waveforms.get(0) == wave )  // If this waveform is at the front of the array list, it is already on top of all layers.
+                if( waveforms.get(0) == wave )                      // If this waveform is at the front of the array list, it is already on top of all layers.
                     return;
                 
-                int desiredIndex = waveforms.indexOf( wave ) - 1;
+                int currentIndex = waveforms.indexOf( wave );
+                swapWaveformLayers( currentIndex, currentIndex-1 );
                 
-                Waveform waveformAtDesiredIndex = waveforms.get( desiredIndex );
-                
-                waveforms.set( desiredIndex, wave );
-                waveforms.set( desiredIndex+1, waveformAtDesiredIndex );
-                
-                // Couldn't find any other way to rearrange order of series except clearing and adding everything back in.
-                waveformChart.getData().clear();
-                for( Waveform w : waveforms )
-                    waveformChart.getData().add( w.waveformXYChart );
-                
-                // https://stackoverflow.com/questions/17761415/how-to-change-order-of-children-in-javafx
-                ObservableList<Node> workingCollection = FXCollections.observableArrayList(waveformLayers.getChildren());
-                Collections.swap(workingCollection, desiredIndex, desiredIndex+1);
-                waveformLayers.getChildren().setAll(workingCollection);
             } );
             
+            // Moves the waveform series and its toolbar down one layer
             Button downButton = (Button)t.getItems().get(3);
             downButton.setOnAction( (ActionEvent el) ->
             {
                 if( waveforms.get( waveforms.size()-1 ) == wave )  // If this waveform is at the end of the array list, it is already on bottom of all layers.
                     return;
                 
-                int desiredIndex = waveforms.indexOf( wave ) + 1;
+                int currentIndex = waveforms.indexOf( wave );
+                swapWaveformLayers( currentIndex, currentIndex+1 );
                 
-                Waveform waveformAtDesiredIndex = waveforms.get( desiredIndex );
-                
-                waveforms.set( desiredIndex, wave );
-                waveforms.set( desiredIndex-1, waveformAtDesiredIndex );
-                
-                // Couldn't find any other way to rearrange order of series except clearing and adding everything back in.
-                waveformChart.getData().clear();
-                for( Waveform w : waveforms )
-                    waveformChart.getData().add( w.waveformXYChart );
-                
-                // https://stackoverflow.com/questions/17761415/how-to-change-order-of-children-in-javafx
-                ObservableList<Node> workingCollection = FXCollections.observableArrayList(waveformLayers.getChildren());
-                Collections.swap(workingCollection, desiredIndex, desiredIndex-1);
-                waveformLayers.getChildren().setAll(workingCollection);
+            } );
+            
+            // Changes the plot points of the waveform series.
+            ColorPicker colorPicker = (ColorPicker)t.getItems().get(4);
+            colorPicker.setOnAction( (ActionEvent el) ->
+            {
+                for( Data d : wave.waveformXYChart.getData() )
+                    d.getNode().setStyle( String.format("-fx-background-color: %s;", formatColorIntoStyle( colorPicker.getValue() )) );
             } );
             
         }
@@ -235,5 +221,35 @@ public class FXMLController {
         {
             ex.printStackTrace();
         }
+    }
+    
+    private String formatColorIntoStyle( Color c ) {
+        int r = (int) (255 * c.getRed()) ;
+        int g = (int) (255 * c.getGreen()) ;
+        int b = (int) (255 * c.getBlue()) ;
+        
+        return String.format("#%02x%02x%02x", r, g, b);
+    }
+    
+    private void swapWaveformLayers( int fromIndex, int toIndex )
+    {
+        Waveform temp = waveforms.get( fromIndex );
+        waveforms.set( fromIndex, waveforms.get( toIndex ) );
+        waveforms.set( toIndex, temp );
+
+        refreshWaveformGraph();
+
+        // https://stackoverflow.com/questions/17761415/how-to-change-order-of-children-in-javafx
+        ObservableList<Node> workingCollection = FXCollections.observableArrayList(waveformLayers.getChildren());
+        Collections.swap( workingCollection, fromIndex, toIndex );
+        waveformLayers.getChildren().setAll( workingCollection );
+    }
+    
+    private void refreshWaveformGraph()
+    {
+        // Couldn't find any other way to rearrange order of series except clearing and adding everything back in.
+        waveformChart.getData().clear();
+        for( int i = waveforms.size()-1; i >= 0; i-- )
+            waveformChart.getData().add( waveforms.get(i).waveformXYChart );
     }
 }

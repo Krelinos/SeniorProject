@@ -13,6 +13,11 @@ import javafx.fxml.FXML;
  */
 public class SettingsController
 {
+    public void initialize()
+    {
+//        JSONArray settingsJSON = (JSONArray) new JSONParser();
+    }
+    
     @FXML
     void defaultWaveformColorChanged( ActionEvent e )
     {

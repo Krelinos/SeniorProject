@@ -53,7 +53,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem fx:id="importXMLButton" mnemonicParsing="false" onAction="#openDialog_importXML" text="Import XML" />
-                  <MenuItem mnemonicParsing="false" text="Export CSV" />
+                  <MenuItem fx:id="exportCSVButton" mnemonicParsing="false" onAction="#openDialog_exportCSV" text="Export CSV" />
                   <MenuItem mnemonicParsing="false" text="Export PNG" />
             </items>
           </Menu>
