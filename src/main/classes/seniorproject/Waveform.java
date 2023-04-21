@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import javafx.geometry.Point2D;
+import javafx.scene.chart.XYChart;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -87,7 +89,8 @@ public class Waveform
     
     //========NON STATIC STUFF
     
-    List<Point2D> waveformData; // All points of a waveform 
+    String ID;
+    XYChart.Series<Double, Double> waveformXYChart;     // All points of a waveform, ready to be inserted into a Scatter Graph.
     Point2D IP1;                // Peak positive current - Maximum measured current on the first peak, measured in Amps.
     Point2D IP2;                // Peak negative current on second peak – Maximum current on the second peak, measured in Amps.
     Point2D FWHM_T1;            // Full Width at Half Maximum – The timing at half of IP1 for t1 to t2, measured in ps (Pico Seconds).
@@ -107,16 +110,17 @@ public class Waveform
         
         //----------
         
-        waveformData = new ArrayList<>();
+        ID = UUID.randomUUID().toString();
+        waveformXYChart = new XYChart.Series<>();
         metadata = new HashMap<>();
         metadataPreferredPropertyNames = new HashMap<>();
         
-        // Integrate all coordinates into the Point2D array list.
+        // Integrate all coordinates into waveformXYChart
+        Iterator<Double> xCoordinatesIterator = xCoordinates.iterator();
         Iterator<Double> yCoordinatesIterator = yCoordinates.iterator();
-        for( Double anXCoordinate : xCoordinates )
-            waveformData.add( new Point2D( anXCoordinate, yCoordinatesIterator.next() ) );
         
-        System.out.println("In Waveform, waveformData has " + waveformData.size() + " elements");
+        while( xCoordinatesIterator.hasNext() && yCoordinatesIterator.hasNext() )
+            waveformXYChart.getData().add( new XYChart.Data<>( xCoordinatesIterator.next(), yCoordinatesIterator.next() ) );
     }
     
     void analyzeWaveform()
