@@ -203,9 +203,29 @@ public class Waveform
             }
         }
         
+        double currentYSign = Math.signum( IP1.getY() );
+        progressFWHM = Integer.MAX_VALUE;
+        
+        while( true )
+        {
+            Data<Double, Double> point = points.next();
+            
+            if( progressFWHM > Math.abs(goalFWHM - point.getYValue()) )
+            {
+                FWHM_T2 = new Point2D( point.getXValue(), point.getYValue() );
+                progressFWHM = Math.abs(goalFWHM - point.getYValue());
+            }
+            
+            if( Math.signum(point.getYValue()) != currentYSign )
+                break;
+        }
+        
         System.out.println( String.format("10%%: %s 90%%: %s 50%%: %s", RT_10.toString(), RT_90.toString(), FWHM_T1.toString()) );
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( RT_10.getX(), RT_10.getY() ) );
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( RT_90.getX(), RT_90.getY() ) );
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( FWHM_T1.getX(), FWHM_T1.getY() ) );
+        waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( FWHM_T2.getX(), FWHM_T2.getY() ) );
+        waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( IP1.getX(), IP1.getY() ) );
+        waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( IP2.getX(), IP2.getY() ) );
     }
 }
