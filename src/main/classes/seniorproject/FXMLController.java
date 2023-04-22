@@ -137,7 +137,9 @@ public class FXMLController {
         
     }
     
-    public void initialize() {
+    public void initialize()
+    {
+        ControllerMediator.getInstance().registerFXMLController(this);
         
         waveforms = new ArrayList<>();
 
@@ -214,6 +216,15 @@ public class FXMLController {
         catch( SAXException | IOException ex )
         {
             ex.printStackTrace();
+        }
+    }
+    
+    void updateSettings( Map<String, String> settings )
+    {
+//        System.out.println("Yay!");
+        if( settings.containsKey("graphBackgroundColor") )
+        {
+            waveformChart.lookup( ".chart-plot-background" ).setStyle( String.format("-fx-background-color: %s;", settings.get("graphBackgroundColor")) );
         }
     }
     

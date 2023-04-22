@@ -16,6 +16,7 @@ public class MainApp extends Application {
     
     @Override
     public void start(Stage stage) throws IOException {
+        
         Parent root = FXMLLoader.load(getClass().getResource("resources/ApplicationLayout.fxml"));
         
         Scene scene = new Scene(root);
@@ -24,6 +25,7 @@ public class MainApp extends Application {
         stage.setTitle("Waveform Grapher");
         stage.setScene(scene);
         stage.show();
+        
     }
 
     public static void main(String[] args) {
