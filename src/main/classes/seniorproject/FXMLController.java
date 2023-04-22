@@ -143,14 +143,14 @@ public class FXMLController {
         
         waveforms = new ArrayList<>();
 
-        NumberAxis h = (NumberAxis)waveformChart.getYAxis();
-        h.setUpperBound( 2.5 );
-        h.setLowerBound( -5.0 );
+        NumberAxis xAxis = (NumberAxis)waveformChart.getXAxis();
+        xAxis.setUpperBound( 4000 );
+        xAxis.setLowerBound( 0 );
         
-        NumberAxis g = (NumberAxis)waveformChart.getXAxis();
-        g.setUpperBound( 4000 );
-        g.setLowerBound( 0 );
-    }    
+        NumberAxis yAxis = (NumberAxis)waveformChart.getYAxis();
+        yAxis.setUpperBound( 2.5 );
+        yAxis.setLowerBound( -5.0 );
+    }
     
     private void addWaveform( File file )
     {
@@ -159,6 +159,7 @@ public class FXMLController {
             Waveform wave = Waveform.readWaveformXML( file );
             
             waveformChart.getData().add( wave.waveformXYChart );
+            waveformChart.getData().add( wave.waveformXYChartSignificantPoints );
             ToolBar t = FXMLLoader.load(getClass().getResource("resources/WaveformLayer.fxml"));
             t.setId( wave.ID );
             
@@ -167,7 +168,14 @@ public class FXMLController {
             
             // Sets all points to black. Eventually, TODO: I want to add an option for the user to select a default color
             for( Data d : wave.waveformXYChart.getData() )
+            {
                     d.getNode().setStyle( String.format("-fx-background-color: %s;", "#000000") );
+            }
+            for( Data d : wave.waveformXYChartSignificantPoints.getData() )
+            {
+                    d.getNode().setStyle( String.format("-fx-background-color: %s;",  "#FF0000") );
+                    d.getNode().lookup( ".chart-symbol" ).setStyle( String.format("-fx-background-radius: 2px;") );
+            }
             refreshWaveformGraph();
             
             // Removes a waveform series and its toolbar from the graph
@@ -255,6 +263,9 @@ public class FXMLController {
         // Couldn't find any other way to rearrange order of series except clearing and adding everything back in.
         waveformChart.getData().clear();
         for( int i = waveforms.size()-1; i >= 0; i-- )
+        {
             waveformChart.getData().add( waveforms.get(i).waveformXYChart );
+            waveformChart.getData().add( waveforms.get(i).waveformXYChartSignificantPoints );
+        }
     }
 }
