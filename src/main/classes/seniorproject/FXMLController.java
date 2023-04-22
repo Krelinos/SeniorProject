@@ -64,13 +64,13 @@ public class FXMLController {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML FILES (*.xml)", "*.xml");
         fileChooser.getExtensionFilters().add(extFilter);
-
+        
         //Show save file dialog
-        File selectedFile = fileChooser.showOpenDialog(null);
+        for( File f : fileChooser.showOpenMultipleDialog(null) )
+            addWaveform( f );
         
         //File filePath = selectedFile.getAbsolutePath();
         
-        addWaveform(selectedFile);
     }
     
     @FXML
