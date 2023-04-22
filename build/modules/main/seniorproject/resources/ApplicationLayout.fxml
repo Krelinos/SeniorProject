@@ -33,13 +33,13 @@
 -->
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -53,8 +53,6 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem fx:id="importXMLButton" mnemonicParsing="false" onAction="#openDialog_importXML" text="Import XML" />
-                  <MenuItem fx:id="exportCSVButton" mnemonicParsing="false" onAction="#openDialog_exportCSV" text="Export CSV" />
-                  <MenuItem mnemonicParsing="false" text="Export PNG" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Settings">
@@ -69,6 +67,21 @@
               <MenuItem mnemonicParsing="false" text="About" />
             </items>
           </Menu>
+            <Menu fx:id="exportId" mnemonicParsing="false" text="Export">
+              <items>
+                <MenuItem fx:id="imageId" mnemonicParsing="false" onAction="#toImage" text="Image" />
+                  <MenuItem fx:id="rawId" mnemonicParsing="false" text="Raw date in Excel" />
+                  <MenuItem fx:id="exportCSVButton" mnemonicParsing="false" onAction="#openDialog_exportCSV" text="CSV" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu fx:id="summaryId" mnemonicParsing="false" text="Summary of...">
+                    <items>
+                      <MenuItem fx:id="ip1Id" mnemonicParsing="false" text="IP1" />
+                        <MenuItem fx:id="ip2Id" mnemonicParsing="false" text="IP2" />
+                        <MenuItem fx:id="allDataId" mnemonicParsing="false" text="All Data Points" />
+                    </items>
+                  </Menu>
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
       <SplitPane dividerPositions="0.5306406685236769" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">

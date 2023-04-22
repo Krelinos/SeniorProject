@@ -1,1 +1,1 @@
-graphBackgroundColor=#ffe6cc
+graphBackgroundColor=#ffffff

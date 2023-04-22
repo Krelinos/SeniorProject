@@ -7,6 +7,8 @@ module main {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.xml;
+//    requires java.desktop;
+    requires javafx.swing;
     
     opens seniorproject to javafx.fxml;
     
