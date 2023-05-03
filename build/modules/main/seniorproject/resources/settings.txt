@@ -1,1 +1,10 @@
+defaultWaveformColor=#000000
+defaultSaveCSVDirectory=C:\Users\Emmer\Documents\NetBeansProjects
+exportImageDirectoryAuto=1
 graphBackgroundColor=#ffffff
+importWaveformDirectoryAuto=1
+waveformPointsBGOpacity=60
+desiredMetadata=
+defaultSaveImageDirectory=C:\Users\Emmer\Pictures\Saved Pictures
+defaultImportWaveformDirectory=D:\waveforms
+exportCSVDirectoryAuto=1

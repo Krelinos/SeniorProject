@@ -1,1 +1,10 @@
+defaultWaveformColor=#000000
 graphBackgroundColor=#ffffff
+defaultSaveImageDirectory=
+defaultImportWaveformDirectory=
+defaultSaveCSVDirectory=
+importWaveformDirectoryAuto=1
+exportImageDirectoryAuto=1
+exportCSVDirectoryAuto=1
+waveformPointsBGOpacity=60
+desiredMetadata=

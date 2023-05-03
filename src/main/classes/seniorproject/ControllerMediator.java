@@ -10,15 +10,22 @@ public class ControllerMediator
     private SettingsController settingsController;
 
     void registerFXMLController(FXMLController controller) {
+        System.out.println("fxl set");
         FXMLController = controller;
     }
 
     void registerSettingsController(SettingsController controller) {
+        System.out.println("set");
         settingsController = controller;
     }
 
     void FXMLControllerUpdateSettings( Map<String, String> settings ) {
          FXMLController.updateSettings( settings );
+    }
+    
+    Object SettingsControllerGetSetting( String setting )
+    {
+        return settingsController.settings.get( setting );
     }
 
 //    void controller3OperateOn(String data) {

@@ -69,6 +69,11 @@ public class Waveform
                     yCoords.add( Double.valueOf( attributes.getValue("y") ) );
                 }
                 
+//                if( FXMLController.metadataValue.containsKey( qName ) )
+//                {
+//                    metadata.put( , name)
+//                }
+                
             }
 
             @Override
@@ -94,6 +99,7 @@ public class Waveform
     String ID;
     XYChart.Series<Double, Double> waveformXYChart;     // All points of a waveform, ready to be inserted into a Scatter Graph.
     XYChart.Series<Double, Double> waveformXYChartSignificantPoints;
+    String name;                // Human readable and user settable label of this waveform
     Point2D IP1;                // Peak positive current - Maximum measured current on the first peak, measured in Amps.
     Point2D IP2;                // Peak negative current on second peak – Maximum current on the second peak, measured in Amps.
     Point2D FWHM_T1;            // Full Width at Half Maximum – The timing at half of IP1 for t1 to t2, measured in ps (Pico Seconds).
@@ -102,7 +108,6 @@ public class Waveform
     Point2D RT_90;
     
     Map<String, String> metadata;                           // Data from the XML to be displayed in the TableView.
-    Map<String, String> metadataPreferredPropertyNames;     // Container to hold human-readable names of metadata, if needed.
     
     Waveform( List<Double> xCoordinates, List<Double> yCoordinates )
     {
@@ -116,8 +121,8 @@ public class Waveform
         ID = UUID.randomUUID().toString();
         waveformXYChart = new XYChart.Series<>();
         waveformXYChartSignificantPoints = new XYChart.Series<>();
+        name = ID.substring(0, 8);
         metadata = new HashMap<>();
-        metadataPreferredPropertyNames = new HashMap<>();
         
         // Integrate all coordinates into waveformXYChart
         Iterator<Double> xCoordinatesIterator = xCoordinates.iterator();
@@ -125,14 +130,14 @@ public class Waveform
         
         while( xCoordinatesIterator.hasNext() && yCoordinatesIterator.hasNext() )
         {
-            BigDecimal xToPicoseconds = new BigDecimal( xCoordinatesIterator.next() );
-            xToPicoseconds = xToPicoseconds.scaleByPowerOfTen(12);
+            BigDecimal xToNanoseconds = new BigDecimal( xCoordinatesIterator.next() );
+            xToNanoseconds = xToNanoseconds.scaleByPowerOfTen(9);
             Double y = yCoordinatesIterator.next();
             
-            if( xToPicoseconds.doubleValue() < -500 )
+            if( xToNanoseconds.doubleValue() < -0.3 )
                 continue;
             
-            waveformXYChart.getData().add( new XYChart.Data<>( xToPicoseconds.doubleValue(), y ) );
+            waveformXYChart.getData().add( new XYChart.Data<>( xToNanoseconds.doubleValue(), y ) );
         }
         
         analyzeWaveform();
@@ -220,7 +225,7 @@ public class Waveform
                 break;
         }
         
-        System.out.println( String.format("10%%: %s 90%%: %s 50%%: %s", RT_10.toString(), RT_90.toString(), FWHM_T1.toString()) );
+        //System.out.println( String.format("10%%: %s 90%%: %s 50%%: %s", RT_10.toString(), RT_90.toString(), FWHM_T1.toString()) );
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( RT_10.getX(), RT_10.getY() ) );
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( RT_90.getX(), RT_90.getY() ) );
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( FWHM_T1.getX(), FWHM_T1.getY() ) );
