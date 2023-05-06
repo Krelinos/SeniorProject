@@ -13,8 +13,6 @@ import javafx.stage.Stage;
 
 
 public class MainApp extends Application {
-
-    static double ZOOM_DELTA = 1.1;
     
     @Override
     public void start(Stage stage) throws IOException {

@@ -39,6 +39,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -64,8 +65,8 @@ public class FXMLController {
                                             // Selected by the user when clicking on the waveform toolbar's name text field.
     private Map<String, Boolean> waveformVisibility;
     
-    static Map<String, String> metadataHumanReadable = new HashMap<>();
-    static Map<String, String> metadataValue = new HashMap<>();
+    static Map<Integer, String> metadataHumanReadable = new HashMap<>();    //Ex: Run Date
+    static Map<Integer, String> metadataValue = new HashMap<>();            //Ex: runDate@result
     
     @FXML
     private VBox ApplicationMain;
@@ -116,6 +117,9 @@ public class FXMLController {
     private TableColumn metadataTableProperty;
     
     @FXML
+    private TableColumn metadataTableValue;
+    
+    @FXML
     void openDialog_importXML( ActionEvent e ) throws IOException
     {
         FileChooser fileChooser = new FileChooser();
@@ -156,6 +160,29 @@ public class FXMLController {
         File file = fileChooser.showSaveDialog( ApplicationMain.getScene().getWindow() );
         
         WritableImage image = waveformChart.snapshot(new SnapshotParameters(), null);
+        if( file != null )
+            ImageIO.write( SwingFXUtils.fromFXImage( image, null ), "png", file );
+    }
+    
+    @FXML
+    void toImageWithPoints(ActionEvent e) throws IOException
+    {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory( new File( (String)SettingsController.settings.get("defaultSaveImageDirectory") ) );
+        
+        // image format filters
+        FileChooser.ExtensionFilter jpgFilter = new FileChooser.ExtensionFilter("JPEG (*.jpg,*.jpeg,*.jpe,*.jiff)", "*.jpg");
+        FileChooser.ExtensionFilter pngFilter = new FileChooser.ExtensionFilter("PNG (*.png)", "*.png");
+
+        // adding our filters
+        fileChooser.getExtensionFilters().add(jpgFilter);
+//        fileChooser.getExtensionFilters().add(pngFilter);
+
+        // showing the save pop up
+        File file = fileChooser.showSaveDialog( ApplicationMain.getScene().getWindow() );
+        
+        WritableImage image = anchorPaneScatterAndInfo.snapshot(new SnapshotParameters(), null);
         if( file != null )
             ImageIO.write( SwingFXUtils.fromFXImage( image, null ), "png", file );
     }
@@ -234,20 +261,20 @@ public class FXMLController {
     
     private DoubleProperty zoom = new SimpleDoubleProperty( 1.0 );
     
-    @FXML
-    void waveformChart_OnScroll( ScrollEvent se )
-    {
-        if( se.getDeltaY() == 0 )
-            return;
-        
-        double ZOOM_DELTA = MainApp.ZOOM_DELTA;
-        
-        double scaleFactor = ( se.getDeltaY() > 0 ) ? ZOOM_DELTA : 1/ZOOM_DELTA;
-        zoom.setValue( zoom.getValue() * scaleFactor );
-        System.out.println( zoom.toString() );
-//        waveformChart.setScaleX( waveformChart.getScaleX() * scaleFactor );
-        
-    }
+//    @FXML
+//    void waveformChart_OnScroll( ScrollEvent se )
+//    {
+//        if( se.getDeltaY() == 0 )
+//            return;
+//        
+//        double ZOOM_DELTA = MainApp.ZOOM_DELTA;
+//        
+//        double scaleFactor = ( se.getDeltaY() > 0 ) ? ZOOM_DELTA : 1/ZOOM_DELTA;
+//        zoom.setValue( zoom.getValue() * scaleFactor );
+//        System.out.println( zoom.toString() );
+////        waveformChart.setScaleX( waveformChart.getScaleX() * scaleFactor );
+//        
+//    }
     
     public void initialize()
     {
@@ -267,7 +294,10 @@ public class FXMLController {
         yAxis.setUpperBound( 2.5 );
         yAxis.setLowerBound( -5.0 );
         
+        metadataTableProperty.setCellValueFactory( new PropertyValueFactory<>("propertyName") );
+        metadataTableValue.setCellValueFactory( new PropertyValueFactory<>("propertyValue") );
         
+        SettingsMetadataTableController.translateSettingsFileToHashMaps();
 //        metadataTable.setItems(ol);
     }
     
@@ -340,6 +370,7 @@ public class FXMLController {
                 
                 primaryWaveform = wave;
                 refreshWaveformGraph();
+                refreshMetadataTable();
                 
                 labelWaveformName.setText( String.format("%s", primaryWaveform.name) );
                 labelIP1.setText( String.format("  IP1:\t\t\t%.3f A @ %.3f nS", primaryWaveform.IP1.getY(), primaryWaveform.IP1.getX()) );
@@ -474,5 +505,10 @@ public class FXMLController {
             if( waveforms.get(i) == primaryWaveform )
                 waveformChart.getData().add( waveforms.get(i).waveformXYChartSignificantPoints );
         }
+    }
+    
+    private void refreshMetadataTable()
+    {
+        metadataTable.setItems( primaryWaveform.metadataForTableView );
     }
 }

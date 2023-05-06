@@ -4,6 +4,8 @@
  */
 package seniorproject;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import static seniorproject.SettingsController.alteredSettings;
 import static seniorproject.SettingsController.settings;
 
 /**
@@ -37,11 +40,16 @@ public class SettingsMetadataTableController
     
     public void initialize()
     {
-        translateDesiredAttributesToHashMaps();
+//        pushHashMapDataToDesiredAttributesTextArea();
+        translateHashMapsToDesiredAttribtuesTextArea();
     }
     
-    private void translateDesiredAttributesToHashMaps()
+    private void translateDesiredAttributesTextAreaToHashMaps()
     {
+        int index = 0;
+        FXMLController.metadataHumanReadable.clear();
+        FXMLController.metadataValue.clear();
+        
         Scanner s = new Scanner( desiredAttributes.getText() );
         while( s.hasNextLine() )
         {
@@ -52,32 +60,79 @@ public class SettingsMetadataTableController
                 continue;                       // Probably looks something like "=operator" or "Start Time="
             
             // An Entry in the hashmap would look like ["Temperature"]=metadata@Temperature
-            FXMLController.metadataValue.put( keyAndValue[0] , keyAndValue[1] );
+            FXMLController.metadataHumanReadable.put( index, keyAndValue[0] );
+            FXMLController.metadataValue.put( index++, keyAndValue[1] );
         }
         
-//        System.out.println( FXMLController.metadataValue.toString() );
+        System.out.println( "yee" + FXMLController.metadataHumanReadable.toString() );
+        System.out.println( "wow" + FXMLController.metadataValue.toString() );
     }
     
-    private void translateSettingsFileToDesiredAttributes()
+    static void translateSettingsFileToHashMaps()
     {
         String desiredInSettings = SettingsController.settings.get("desiredMetadata");
-        String[] desiredSplit = desiredInSettings.split("&&&");                             // &&& is illegal in XML, which makes it perfect as a means to split the settings
+        System.out.println("^v^" + SettingsController.settings.toString());
+        System.out.println("owo" + desiredInSettings);
+        String[] desiredSplit = desiredInSettings.split("&&&&");                            // &&&& is illegal in XML, which makes it perfect as a means to split the settings
                                                                                             // I just hope no one uses &&& in their property name.
+        FXMLController.metadataHumanReadable.clear();
         FXMLController.metadataValue.clear();
+        int index = 0;
+        
         for ( String aDesiredAttribute : desiredSplit )
         {
-            String[] desiredPropNameAndValue = aDesiredAttribute.split("=");                // I hope no one uses = either.
-            FXMLController.metadataValue.put( desiredPropNameAndValue[0] , desiredPropNameAndValue[1] );
+            System.out.println("uwu" + aDesiredAttribute);
+            String[] desiredPropNameAndValue = aDesiredAttribute.split("&&&");                // I hope no one uses &&& either.
+            
+            if( desiredPropNameAndValue.length >= 2)
+            {
+                FXMLController.metadataHumanReadable.put( index, desiredPropNameAndValue[0] );
+                FXMLController.metadataValue.put( index++, desiredPropNameAndValue[1] );
+            }
         }
+        System.out.println( FXMLController.metadataHumanReadable.toString() );
+        System.out.println( FXMLController.metadataValue.toString() );
     }
     
     private void translateHashMapsToSettingsFile()
     {
         String metadataToSettingLine = "";
-        for( Entry<String, String> e : FXMLController.metadataValue.entrySet() )
-            metadataToSettingLine += e.getKey() + "=" + e.getValue() + "&&&";
+        int index = 0;
+        while( FXMLController.metadataValue.containsKey(index) )
+            metadataToSettingLine += FXMLController.metadataHumanReadable.get(index) + "&&&" + FXMLController.metadataValue.get(index++) + "&&&&";
         
         settings.put( "desiredMetadata", metadataToSettingLine );
+        saveSettings();
+    }
+    
+    private void translateHashMapsToDesiredAttribtuesTextArea()
+    {
+        int index = 0;
+        String input = "";
+        while( FXMLController.metadataValue.containsKey(index) )
+            input += FXMLController.metadataHumanReadable.get(index) + "=" + FXMLController.metadataValue.get(index++) + "\n";
+        
+        desiredAttributes.setText( input );
+    }
+    
+    private void saveSettings()
+    {
+        for( Entry<String, String> aSetting : alteredSettings.entrySet() )
+            settings.put( aSetting.getKey() , aSetting.getValue() );
+        
+        try( FileWriter settingsWriter = new FileWriter( getClass().getResource("resources/settings.txt").getFile(), false ) )
+        {
+            for( Entry aSetting : settings.entrySet() )
+            {
+                System.out.println( aSetting.getKey() + "=" + aSetting.getValue() );
+                settingsWriter.write( aSetting.getKey() + "=" + aSetting.getValue() + "\n");
+            }
+            settingsWriter.close();
+        }
+        catch( IOException ex )
+        {
+            ex.printStackTrace();
+        }
     }
     
     
@@ -91,7 +146,7 @@ public class SettingsMetadataTableController
     @FXML
     void applyAndCloseButtonClicked( ActionEvent e )
     {
-        translateDesiredAttributesToHashMaps();
+        translateDesiredAttributesTextAreaToHashMaps();
         translateHashMapsToSettingsFile();
                 
         Stage settingsWindow = (Stage)settingsPane.getScene().getWindow();
@@ -103,6 +158,16 @@ public class SettingsMetadataTableController
     {
         Stage settingsWindow = (Stage)settingsPane.getScene().getWindow();
         settingsWindow.close();
+    }
+    
+    @FXML
+    void restoreDefaultButtonClicked( ActionEvent e )
+    {
+        desiredAttributes.setText("""
+                                  Run Date=runDate@result
+                                  Temperature=Temperature@metadata
+                                  Humidity (Rel)=RelativeHumidity@metadata
+                                  First Peak Current=IP1""");
     }
     
     private class WaveformMetadata

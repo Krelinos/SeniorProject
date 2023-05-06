@@ -16,11 +16,13 @@
             <Button fx:id="cancelButton" layoutX="135.0" layoutY="10.0" mnemonicParsing="false" onAction="#cancelButtonClicked" text="Cancel" />
          </buttons>
       </ButtonBar>
-      <TextArea fx:id="desiredAttributes" layoutX="103.0" layoutY="128.0" prefHeight="216.0" prefWidth="379.0" text="Run Date=runDate@result&#10;Temperature=Temperature@metadata&#10;Humidity (Rel)=RelativeHumidity@metadata&#10;First Peak Current=IP1" />
+      <TextArea fx:id="desiredAttributes" layoutX="103.0" layoutY="136.0" prefHeight="216.0" prefWidth="379.0" text="Run Date=runDate@result&#10;Temperature=Temperature@metadata&#10;Humidity (Rel)=RelativeHumidity@metadata&#10;First Peak Current=IP1" />
       <Label layoutX="14.0" layoutY="59.0" text="The order in the table is determined by the order in the text field below." />
-      <Label layoutX="14.0" layoutY="76.0" text="The format is as follows: HumanReadableName=tagNameInXML@attributeName" />
+      <Label layoutX="14.0" layoutY="76.0" text="The format is as follows: HumanReadableName=attributeName@tagNameInXML" />
       <Label layoutX="14.0" layoutY="93.0" text="Additionally, the table allows for the following special inputs: IP1, IP2, FWHM1, FWHM2, Tr10, Tr90" />
       <Label layoutX="14.0" layoutY="31.0" text="Reimport to apply changes to previously imported waveforms." />
+      <Label layoutX="14.0" layoutY="110.0" text="The following character patterns are not allowed: =, &amp;&amp;&amp;, &amp;&amp;&amp;&amp;" />
+      <Button fx:id="RestoreDefaultButton" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" onAction="#restoreDefaultButtonClicked" text="Restore Default" />
    </children>
    <padding>
       <Insets left="10.0" right="10.0" top="10.0" />

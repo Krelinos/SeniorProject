@@ -73,8 +73,8 @@
           </Menu>
             <Menu fx:id="exportId" mnemonicParsing="false" text="Export">
               <items>
-                <MenuItem fx:id="imageId" mnemonicParsing="false" onAction="#toImage" text="Image" />
-                  <MenuItem fx:id="rawId" mnemonicParsing="false" text="Raw date in Excel" />
+                <MenuItem fx:id="imageId" mnemonicParsing="false" onAction="#toImage" text="As Image (without point info)" />
+                  <MenuItem fx:id="rawId" mnemonicParsing="false" onAction="#toImageWithPoints" text="As Image" />
                   <MenuItem fx:id="exportCSVButton" mnemonicParsing="false" onAction="#openDialog_exportCSV" text="CSV" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu fx:id="summaryId" mnemonicParsing="false" text="Summary of...">
@@ -109,7 +109,7 @@
                   </VBox>
                   <AnchorPane fx:id="anchorPaneScatterAndInfo" HBox.hgrow="ALWAYS">
                      <children>
-                        <ScatterChart fx:id="waveformChart" alternativeColumnFillVisible="true" animated="false" legendSide="LEFT" legendVisible="false" onScroll="#waveformChart_OnScroll" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                        <ScatterChart fx:id="waveformChart" alternativeColumnFillVisible="true" animated="false" legendSide="LEFT" legendVisible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                           <xAxis>
                             <NumberAxis label="Time (ns)" prefHeight="22.0" prefWidth="972.0" side="LEFT" />
                           </xAxis>

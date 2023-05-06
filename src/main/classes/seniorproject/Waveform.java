@@ -8,11 +8,16 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -38,6 +43,8 @@ public class Waveform
     //==========STATIC STUFF
     private static SAXParser saxParser;
     
+    private static final List<String> metadataSpecialKeywords;
+    
     static      // I just learned that you can do this for static classes - Emmer 20 April 2023
     {
         try
@@ -49,13 +56,35 @@ public class Waveform
             ex.printStackTrace();
         }
         
-        
+        metadataSpecialKeywords = new ArrayList<>();
+        metadataSpecialKeywords.add("IP1");
+        metadataSpecialKeywords.add("IP2");
+        metadataSpecialKeywords.add("FWHM1");
+        metadataSpecialKeywords.add("FWHM2");
+        metadataSpecialKeywords.add("Tr10");
+        metadataSpecialKeywords.add("Tr90");
     }
     
     static Waveform readWaveformXML( File file ) throws SAXException, IOException
     {
         List<Double> xCoords = new ArrayList<>();
         List<Double> yCoords = new ArrayList<>();
+        Map<String, String> metadataFound = new HashMap<>();
+        
+        Map<Integer, String> tagsToLookOutFor = new HashMap<>();
+        Map< String, List<String> > attributesInTagsToLookOutFor = new HashMap<>();
+        
+        for( Entry<Integer, String> e : FXMLController.metadataValue.entrySet() )       // Ex: e = runDate@result
+        {
+            String[] s = e.getValue().split("@");
+            if( s.length < 2 )
+                continue;                           // NOTE: This does not always mean a malformed attribute setting. It could be a special keyword, which is handled in FXMLController.
+            
+            tagsToLookOutFor.put( e.getKey(), s[1] );
+            
+            attributesInTagsToLookOutFor.putIfAbsent(s[1], new ArrayList<>() );
+            attributesInTagsToLookOutFor.get( s[1] ).add( s[0] );
+        }
         
         DefaultHandler handler = new DefaultHandler()
         {
@@ -69,10 +98,13 @@ public class Waveform
                     yCoords.add( Double.valueOf( attributes.getValue("y") ) );
                 }
                 
-//                if( FXMLController.metadataValue.containsKey( qName ) )
-//                {
-//                    metadata.put( , name)
-//                }
+                if( tagsToLookOutFor.containsValue( qName ) )
+                {
+                    System.out.println("Found " + qName);
+                    for( String s : attributesInTagsToLookOutFor.get( qName ) )
+                        if( attributes.getValue(s) != null )
+                            metadataFound.put( s + "@" + qName , attributes.getValue(s) );
+                }
                 
             }
 
@@ -91,7 +123,15 @@ public class Waveform
         
         saxParser.parse( file, handler );
         
-        return new Waveform( xCoords, yCoords );
+        return new Waveform( xCoords, yCoords, metadataFound );
+    }
+    
+    static Integer getKeyOfValue( Map<Integer, String> m, String v )
+    {
+        for( Entry<Integer, String> e : m.entrySet() )
+            if( e.getValue().equalsIgnoreCase(v) )
+                return e.getKey();
+        return null;
     }
     
     //========NON STATIC STUFF
@@ -108,8 +148,9 @@ public class Waveform
     Point2D RT_90;
     
     Map<String, String> metadata;                           // Data from the XML to be displayed in the TableView.
+    ObservableList<WaveformMetadataForTableView> metadataForTableView;
     
-    Waveform( List<Double> xCoordinates, List<Double> yCoordinates )
+    Waveform( List<Double> xCoordinates, List<Double> yCoordinates, Map<String, String> setMetadata )
     {
         // Sanity check. Error out if somehow there are unequal amounts of x and y points.
         // Eventually, this should be a dialog box in the application.
@@ -122,7 +163,9 @@ public class Waveform
         waveformXYChart = new XYChart.Series<>();
         waveformXYChartSignificantPoints = new XYChart.Series<>();
         name = ID.substring(0, 8);
-        metadata = new HashMap<>();
+        metadata = setMetadata;
+        metadataForTableView = FXCollections.observableArrayList();
+        
         
         // Integrate all coordinates into waveformXYChart
         Iterator<Double> xCoordinatesIterator = xCoordinates.iterator();
@@ -141,6 +184,41 @@ public class Waveform
         }
         
         analyzeWaveform();
+        
+        for( String s : FXMLController.metadataValue.values() )
+        {
+            String value = "";
+            if( metadataSpecialKeywords.contains(s) )               // s = IP1 or IP2 or FWHM1 or FWHM2 or Tr10 or Tr90
+                switch( s )
+                {
+                    case "IP1" ->
+                        value = String.format( "%.3f A @ %.3f nS", IP1.getY(), IP1.getX() );
+                    case "IP2" ->
+                        value = String.format( "%.3f A @ %.3f nS", IP2.getY(), IP2.getX() );
+                    case "FWHM1" ->
+                        value = String.format( "%.3f A @ %.3f nS", FWHM_T1.getY(), FWHM_T1.getX() );
+                    case "FWHM2" ->
+                        value = String.format( "%.3f A @ %.3f nS", FWHM_T2.getY(), FWHM_T2.getX() );
+                    case "Tr10" ->
+                        value = String.format( "%.3f A @ %.3f nS", RT_10.getY(), RT_10.getX() );
+                    case "Tr90" ->
+                        value = String.format( "%.3f A @ %.3f nS", RT_90.getY(), RT_90.getX() );
+                }
+            else
+                value = metadata.get( s );
+            
+            metadataForTableView.add(
+                        new WaveformMetadataForTableView(
+                                FXMLController.metadataHumanReadable.get(
+                                        getKeyOfValue(
+                                                FXMLController.metadataValue
+                                                , s
+                                        )
+                                )
+                                , value
+                        )
+                );
+        }
     }
     
     void analyzeWaveform()
@@ -232,5 +310,27 @@ public class Waveform
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( FWHM_T2.getX(), FWHM_T2.getY() ) );
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( IP1.getX(), IP1.getY() ) );
         waveformXYChartSignificantPoints.getData().add( new XYChart.Data<>( IP2.getX(), IP2.getY() ) );
+    }
+
+    public static class WaveformMetadataForTableView
+    {
+        private final SimpleStringProperty propertyName;
+        private final SimpleStringProperty propertyValue;
+        
+        public WaveformMetadataForTableView( String name, String value )
+        {
+            this.propertyName = new SimpleStringProperty( name );
+            this.propertyValue = new SimpleStringProperty( value );
+        }
+        
+        public String getPropertyName()
+        {
+            return propertyName.get();
+        }
+        
+        public String getPropertyValue()
+        {
+            return propertyValue.get();
+        }
     }
 }

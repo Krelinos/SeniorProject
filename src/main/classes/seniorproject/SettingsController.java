@@ -12,14 +12,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -38,10 +42,16 @@ public class SettingsController
     
     static Map<String, String> alteredSettings;
     
+    static
+    {
+        settings = new HashMap<>();
+        alteredSettings = new HashMap<>();
+    }
+    
     public void initialize()
     {
         ControllerMediator.getInstance().registerSettingsController(this);
-        prepSettingsMap();
+//        prepSettingsMap();
         
         if( settings.get( "defaultWaveformColor" ) != null )
         {
@@ -80,7 +90,6 @@ public class SettingsController
         {
             alteredSettings.put("waveformPointsBGOpacity", String.valueOf( newValue.doubleValue() ));
         });
-        
     }
     
     static void prepSettingsMap()
@@ -283,4 +292,5 @@ public class SettingsController
         
         return String.format("#%02x%02x%02x", r, g, b);
     }
+    
 }
