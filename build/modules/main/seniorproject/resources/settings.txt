@@ -1,10 +1,10 @@
 defaultWaveformColor=#000000
-defaultSaveCSVDirectory=C:\Users\Emmer\Documents\NetBeansProjects\SeniorProjectMilestone2\SeniorProject
+defaultSaveCSVDirectory=
 exportImageDirectoryAuto=1
 graphBackgroundColor=#ffffff
 importWaveformDirectoryAuto=1
 waveformPointsBGOpacity=60
 desiredMetadata=Run Date&&&runDate@result&&&&Temperature&&&Temperature@metadata&&&&Humidity (Rel)&&&RelativeHumidity@metadata&&&&First Peak Current&&&IP1&&&&
-defaultSaveImageDirectory=C:\Users\Emmer\Documents\NetBeansProjects\SeniorProjectMilestone2\SeniorProject
-defaultImportWaveformDirectory=D:\waveforms
+defaultSaveImageDirectory=
+defaultImportWaveformDirectory=
 exportCSVDirectoryAuto=1
